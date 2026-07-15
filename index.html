@@ -14,9 +14,15 @@
 <link rel="icon" type="image/png" href="./icon-192.png">
 <title>The Forge: 8-Bit</title>
 <style>
+/* Press Start 2P (headings/buttons) + VT323 (body) — both SIL OFL, bundled locally. */
 @font-face {
-  font-family: "ForgePixel";
-  src: url("./forgepixel.ttf") format("truetype");
+  font-family: "Press Start 2P";
+  src: url("./press-start-2p.woff2") format("woff2");
+  font-display: block;
+}
+@font-face {
+  font-family: "VT323";
+  src: url("./vt323.woff2") format("woff2");
   font-display: block;
 }
 :root { color-scheme: dark; }
@@ -24,7 +30,7 @@
 img, .sprite { image-rendering: pixelated; image-rendering: crisp-edges; }
 html { background: #14100e; }
 body {
-  font-family: "ForgePixel", "Courier New", monospace;
+  font-family: "VT323", "Courier New", monospace;
   background:
     radial-gradient(120% 60% at 50% 108%, rgba(234,88,12,.18) 0%, rgba(234,88,12,0) 60%),
     linear-gradient(180deg, #1b1512 0%, #14100e 340px, #100c0a 100%);
@@ -54,7 +60,8 @@ body {
   background: radial-gradient(circle at 50% 60%, #5a2410 0%, #2a130a 46%, #0c0908 82%);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 22px; cursor: pointer;
-  animation: splashout .4s steps(3) 1.9s forwards, camshake .28s steps(4) .62s;
+  /* Splash holds, then dissolves. Rattle starts exactly at impact (0.6s), same as the original Forge. */
+  animation: splashout .4s steps(3) 1.9s forwards, camshake .28s steps(4) .6s;
 }
 #splash.gone { display: none; }
 @keyframes splashout { to { opacity: 0; visibility: hidden; } }
@@ -64,31 +71,39 @@ body {
 }
 #stage { position: relative; width: 240px; height: 180px; }
 #anvilSprite {
+  /* 32x22 sprite at integer 5x so pixels stay square */
   position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
-  width: 168px; height: auto;
+  width: 160px; height: auto;
 }
 #hammerSprite {
-  position: absolute; left: 132px; top: 6px; width: 78px; height: auto;
-  transform-origin: 82% 14%;
-  animation: swing .62s steps(5) .1s both;
+  /* 24x21 sprite at integer 4x. Rest pose: head sits on the anvil face.
+     Pivot = end of the handle (top-right), like a hand gripping it. */
+  position: absolute; left: 94px; top: -34px; width: 96px; height: auto;
+  transform-origin: 90% 10%;
+  /* Raised over the shoulder, drops clockwise onto the anvil, small bounce.
+     Same arc as the original Forge (72 -> 0 -> 10 -> 4), stepped for 8-bit feel.
+     Impact lands at .08s + 70% of .75s = 0.6s. */
+  animation: swing .75s steps(5) .08s both;
 }
 @keyframes swing {
-  0%   { transform: rotate(-78deg); }
-  100% { transform: rotate(-6deg); }
+  0%   { transform: rotate(72deg); }
+  70%  { transform: rotate(0deg); }
+  85%  { transform: rotate(10deg); }
+  100% { transform: rotate(4deg); }
 }
 .pspark {
-  position: absolute; left: 118px; top: 60px; width: 8px; height: 8px; background: #fdba74;
+  position: absolute; left: 128px; top: 42px; width: 8px; height: 8px; background: #fdba74;
   box-shadow: 0 0 5px 1px rgba(249,115,22,.8); opacity: 0;
-  animation: pfly .5s steps(6) .62s forwards;
+  animation: pfly .5s steps(6) .6s forwards;
 }
 @keyframes pfly {
   0% { opacity: 1; transform: translate(0,0); }
   100% { opacity: 0; transform: translate(var(--sx), var(--sy)); }
 }
 #splash .title {
-  font-family: "ForgePixel", monospace; color: #f97316; font-size: 30px; letter-spacing: 3px;
+  font-family: "Press Start 2P", monospace; color: #f97316; font-size: 22px; letter-spacing: 2px;
   text-shadow: 3px 3px 0 #7c2d12, 0 0 14px rgba(249,115,22,.5);
-  opacity: 0; animation: titlein .4s steps(2) .66s forwards;
+  opacity: 0; animation: titlein .4s steps(2) .6s forwards;
 }
 @keyframes titlein { to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { #splash { display: none; } }
@@ -101,49 +116,50 @@ body {
 
 header { text-align: center; margin-bottom: 16px; }
 h1 {
-  font-family: "ForgePixel", monospace; font-size: 30px; color: #f97316;
+  font-family: "Press Start 2P", monospace; font-size: 24px; color: #f97316;
   text-transform: uppercase; letter-spacing: 2px;
   text-shadow: 3px 3px 0 #7c2d12, 0 0 12px rgba(249,115,22,.35);
 }
-.sub8 { font-size: 12px; color: #8a5a3a; letter-spacing: 3px; margin-top: 4px; }
-.quote { color: #c98f5f; margin-top: 10px; font-size: 13px; line-height: 1.5; padding: 0 6px; }
+.sub8 { font-family: "Press Start 2P", monospace; font-size: 10px; color: #8a5a3a; letter-spacing: 3px; margin-top: 8px; }
+.quote { color: #c98f5f; margin-top: 10px; font-size: 17px; line-height: 1.4; padding: 0 6px; }
 .datebar { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 16px 0 4px; }
 .datebar button {
-  font-family: "ForgePixel", monospace; border: none; background: #2a201a; color: #f97316;
-  padding: 8px 14px; cursor: pointer; font-size: 14px;
+  font-family: "Press Start 2P", monospace; border: none; background: #2a201a; color: #f97316;
+  padding: 8px 14px; cursor: pointer; font-size: 12px;
   box-shadow: inset 0 0 0 2px #0f0b09, 0 2px 0 #0a0705;
 }
 .datebar button:active { transform: translateY(2px); box-shadow: inset 0 0 0 2px #0f0b09; }
 .datebar button:disabled { opacity: .3; }
-.datebar .dlabel { font-size: 13px; color: #e7ddce; min-width: 210px; text-align: center; }
-.notToday { color: #b06a3a; font-size: 11px; text-align: center; margin-bottom: 6px; }
+.datebar .dlabel { font-size: 18px; color: #e7ddce; min-width: 210px; text-align: center; }
+.notToday { color: #b06a3a; font-size: 14px; text-align: center; margin-bottom: 6px; }
 
 .scorerow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0 18px; }
 .scorecard { background: #221a15; padding: 12px 8px; text-align: center; }
-.scorecard .big { font-size: 26px; color: #fb923c; text-shadow: 2px 2px 0 #431407; }
-.scorecard .lbl { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #9c8060; margin-top: 6px; }
-.scorecard .sub { font-size: 10px; color: #6f5a45; margin-top: 3px; }
+.scorecard .big { font-family: "Press Start 2P", monospace; font-size: 22px; color: #fb923c; text-shadow: 2px 2px 0 #431407; }
+.scorecard .lbl { font-family: "Press Start 2P", monospace; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #9c8060; margin-top: 8px; line-height: 1.5; }
+.scorecard .sub { font-size: 13px; color: #6f5a45; margin-top: 3px; }
 
 .cols { display: grid; grid-template-columns: 1.15fr .85fr; gap: 14px; }
 @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } .scorerow { grid-template-columns: repeat(2,1fr); } }
 
 .pillar, .panel { background: #201812; padding: 12px 14px; margin-bottom: 12px; }
 .pillar h3, .panel h3 {
-  font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #f97316;
-  padding-bottom: 8px; margin-bottom: 8px; border-bottom: 2px solid #3a2c22;
-  text-shadow: 2px 2px 0 #431407;
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #f97316;
+  padding-bottom: 9px; margin-bottom: 8px; border-bottom: 2px solid #3a2c22;
+  text-shadow: 2px 2px 0 #431407; line-height: 1.6;
 }
 
 .habit { display: flex; align-items: center; gap: 8px; padding: 9px 2px; user-select: none; -webkit-user-select: none; border-bottom: 1px dashed #2c221b; }
 .habit:last-child { border-bottom: none; }
-.habit .hname { flex: 1; font-size: 14px; min-width: 0; color: #d8ccbb; line-height: 1.35; }
+.habit .hname { flex: 1; font-size: 18px; min-width: 0; color: #d8ccbb; line-height: 1.25; }
 .habit.done .hname { color: #fb923c; }
 .habit.miss .hname { color: #7a6a58; }
 .habit.na .hname { color: #6f5f4c; text-decoration: line-through; }
 
 .tri { display: flex; gap: 6px; flex: none; }
 .tbtn {
-  font-family: "ForgePixel", monospace; width: 30px; height: 30px;
+  font-family: "VT323", monospace; width: 30px; height: 30px;
   background: #17110d; color: #5a4c3c; font-size: 15px; line-height: 1;
   display: flex; align-items: center; justify-content: center; cursor: pointer;
   box-shadow: inset 0 0 0 2px #3a2c22;
@@ -153,51 +169,51 @@ h1 {
 .tbtn.on-x    { background: #b91c1c; color: #fff; box-shadow: inset 0 0 0 2px #611414; }
 .tbtn.on-na   { background: #55493a; color: #d8ccbb; box-shadow: inset 0 0 0 2px #2c241c; }
 
-.streak { font-size: 11px; color: #fb923c; min-width: 40px; text-align: right; flex: none; }
+.streak { font-size: 15px; color: #fb923c; min-width: 40px; text-align: right; flex: none; }
 .streak.zero { color: #5a4c3c; }
-.delbtn { display: none; border: none; background: #3a1414; color: #fca5a5; padding: 4px 8px; cursor: pointer; font-size: 11px; font-family:"ForgePixel",monospace; flex: none; }
+.delbtn { display: none; border: none; background: #3a1414; color: #fca5a5; padding: 4px 8px; cursor: pointer; font-size: 14px; font-family:"VT323",monospace; flex: none; }
 body.editing .delbtn { display: inline-block; }
 body.editing .habit .hname { text-decoration: underline dotted; cursor: pointer; }
 
 textarea {
   width: 100%; min-height: 110px; border: none; padding: 10px;
-  font-family: "ForgePixel", monospace; font-size: 14px; line-height: 1.5; resize: vertical;
+  font-family: "VT323", monospace; font-size: 18px; line-height: 1.35; resize: vertical;
   background: #17110d; color: #e7ddce; box-shadow: inset 0 0 0 2px #3a2c22; letter-spacing:.5px;
 }
 textarea:focus { outline: none; box-shadow: inset 0 0 0 2px #ea580c; }
-.saved { font-size: 10px; color: #6f5a45; text-align: right; margin-top: 4px; height: 13px; }
-.hint { font-size: 11px; color: #6f5a45; margin-top: 6px; line-height: 1.5; }
+.saved { font-size: 13px; color: #6f5a45; text-align: right; margin-top: 4px; height: 16px; }
+.hint { font-size: 14px; color: #6f5a45; margin-top: 6px; line-height: 1.4; }
 
-.ymsg { background: #17110d; border-left: 4px solid #ea580c; padding: 9px 11px; margin-bottom: 10px; font-size: 13px; color: #d8b48c; line-height: 1.5; }
-.ymsg .from { display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #b06a3a; margin-bottom: 4px; }
+.ymsg { background: #17110d; border-left: 4px solid #ea580c; padding: 9px 11px; margin-bottom: 10px; font-size: 16px; color: #d8b48c; line-height: 1.4; }
+.ymsg .from { display: block; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: #b06a3a; margin-bottom: 4px; }
 .ymsg.empty { border-left-color: #3a2c22; color: #6f5a45; }
 
 .heatwrap { overflow-x: auto; }
 .heat { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 13px); gap: 3px; width: max-content; }
 .cell { width: 13px; height: 13px; background: #2a211c; }
-.weektable { width: 100%; border-collapse: collapse; font-size: 12px; }
+.weektable { width: 100%; border-collapse: collapse; font-size: 15px; }
 .weektable td, .weektable th { padding: 5px 4px; text-align: center; border-bottom: 1px solid #2c221b; }
-.weektable th { color: #9c8060; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.weektable th { color: #9c8060; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
 .wk-score { color: #fb923c; }
 
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 18px; }
 .toolbar button, .swbtn {
-  font-family: "ForgePixel", monospace; border: none; background: #2a201a; color: #c9b39a;
-  padding: 9px 13px; cursor: pointer; font-size: 12px;
+  font-family: "Press Start 2P", monospace; border: none; background: #2a201a; color: #c9b39a;
+  padding: 10px 12px; cursor: pointer; font-size: 9px;
   box-shadow: inset 0 0 0 2px #0f0b09, 0 2px 0 #0a0705;
 }
 .toolbar button:active, .swbtn:active { transform: translateY(2px); box-shadow: inset 0 0 0 2px #0f0b09; }
 .addrow { display: none; gap: 8px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
 body.editing .addrow { display: flex; }
 .addrow input, .addrow select {
-  font-family: "ForgePixel", monospace; border: none; background: #17110d; color: #e7ddce;
-  padding: 9px; font-size: 14px; box-shadow: inset 0 0 0 2px #3a2c22;
+  font-family: "VT323", monospace; border: none; background: #17110d; color: #e7ddce;
+  padding: 9px; font-size: 17px; box-shadow: inset 0 0 0 2px #3a2c22;
 }
 .addrow input { flex: 1; min-width: 160px; }
-.banner { display: none; background: #2a1a0e; color: #fdba74; padding: 10px 12px; font-size: 12px; margin: 0 0 14px; text-align: center; box-shadow: inset 0 0 0 2px #7c2d12; }
+.banner { display: none; background: #2a1a0e; color: #fdba74; padding: 10px 12px; font-size: 15px; margin: 0 0 14px; text-align: center; box-shadow: inset 0 0 0 2px #7c2d12; }
 .banner.show { display: block; }
-.footer-verse { text-align: center; color: #6f5a45; font-size: 11px; margin-top: 26px; line-height: 1.6; padding: 0 6px; }
-.installhint { text-align: center; color: #b06a3a; font-size: 11px; margin-top: 10px; display: none; line-height:1.5; }
+.footer-verse { text-align: center; color: #6f5a45; font-size: 15px; margin-top: 26px; line-height: 1.5; padding: 0 6px; }
+.installhint { text-align: center; color: #b06a3a; font-size: 14px; margin-top: 10px; display: none; line-height:1.5; }
 </style>
 </head>
 <body>
@@ -207,11 +223,11 @@ body.editing .addrow { display: flex; }
     <img id="anvilSprite" class="sprite" src="./anvil.png" alt="">
     <img id="hammerSprite" class="sprite" src="./hammer.png" alt="">
     <div class="pspark" style="--sx:-30px;--sy:-34px"></div>
-    <div class="pspark" style="--sx:26px;--sy:-40px;left:126px"></div>
-    <div class="pspark" style="--sx:-44px;--sy:-12px;top:66px"></div>
-    <div class="pspark" style="--sx:46px;--sy:-18px;left:128px;top:64px"></div>
-    <div class="pspark" style="--sx:-8px;--sy:-50px;left:122px"></div>
-    <div class="pspark" style="--sx:36px;--sy:-42px;left:130px;top:58px"></div>
+    <div class="pspark" style="--sx:26px;--sy:-40px;left:136px"></div>
+    <div class="pspark" style="--sx:-44px;--sy:-12px;top:48px"></div>
+    <div class="pspark" style="--sx:46px;--sy:-18px;left:138px;top:46px"></div>
+    <div class="pspark" style="--sx:-8px;--sy:-50px;left:132px"></div>
+    <div class="pspark" style="--sx:36px;--sy:-42px;left:140px;top:40px"></div>
   </div>
   <div class="title">THE FORGE</div>
 </div>
@@ -606,7 +622,7 @@ el("importFile").addEventListener("change",function(){
 var splash=el("splash");
 splash.addEventListener("click",function(){ splash.classList.add("gone"); });
 setTimeout(function(){ splash.classList.add("gone"); }, 2400);
-setTimeout(function(){ buzz([20,55,30]); }, 620);
+setTimeout(function(){ buzz([20,55,30]); }, 600); /* hammer strike buzz at impact */
 
 var standalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
 if(!standalone) el("installHint").style.display="block";

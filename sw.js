@@ -1,6 +1,7 @@
 /* The Forge: 8-Bit — service worker. Bump CACHE version whenever files change. */
-var CACHE = "forge8bit-cache-v1";
-var ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./forgepixel.ttf",
+var CACHE = "forge8bit-cache-v2";
+var ASSETS = ["./", "./index.html", "./manifest.webmanifest",
+  "./press-start-2p.woff2", "./vt323.woff2",
   "./anvil.png", "./hammer.png", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", function(e){
